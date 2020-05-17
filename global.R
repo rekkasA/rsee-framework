@@ -605,7 +605,8 @@ combinedPlot <- function(cases,
           round(cases$value, 2),
           "%"
         )
-      )
+      ),
+      legendgroup = ~g
     ) %>%
     plotly::layout(
       yaxis = list(
@@ -661,7 +662,8 @@ combinedPlot <- function(cases,
           ),
           ")"
         )
-      )
+      ),
+      legendgroup = ~estOutcome
     ) %>%
     plotly::layout(
       yaxis = list(
@@ -722,7 +724,9 @@ combinedPlot <- function(cases,
           ),
           ")"
         )
-      )
+      ),
+      legendgroup = ~estOutcome,
+      showlegend = FALSE
     ) %>%
     layout(
       yaxis = list(
