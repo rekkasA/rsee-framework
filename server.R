@@ -5,38 +5,50 @@ shiny::shinyServer(function(input, output, session) {
   shiny::observe({
     stratificationOutcome <- input$stratOutcome
     filteredEstimationOutcomes <- mappedOverallRelativeResults %>%
-      dplyr::filter(stratOutcome == stratificationOutcome) %>%
+      dplyr::filter(
+        stratOutcome == stratificationOutcome
+      ) %>%
       dplyr::select(estOutcome)
 
 
     shiny::updateSelectInput(session = session, inputId = "estOutcome", choices = unique(filteredEstimationOutcomes))
   })
-
+  
   resultSubset <- shiny::reactive({
-
-    results <- getResults(treat = input$treatment, comp = input$comparator, strat = input$stratOutcome,
-                          est = input$estOutcome, anal = input$analysis, db = input$database,
-                          mappedOverallRelativeResults = mappedOverallRelativeResults,
-                          mappedOverallAbsoluteResults = mappedOverallAbsoluteResults,
-                          mappedOverallCasesResults = mappedOverallCasesResults)
-
-    return(results)
-
-  })
-
-  incidenceSubset <- shiny::reactive({
-
-    res <- getIncidence(
-      treat = input$treatment, comp = input$comparator, strat = input$stratOutcome,
-      est = input$estOutcome, anal = input$analysis, db = input$database,
-      incidence = incidence
+    
+    results <- getResults(
+      treat = input$treatment,
+      comp = input$comparator,
+      strat = input$stratOutcome,
+      est = input$estOutcome,
+      anal = input$analysis, 
+      db = input$database,
+      mappedOverallRelativeResults = mappedOverallRelativeResults,
+      mappedOverallAbsoluteResults = mappedOverallAbsoluteResults,
+      mappedOverallCasesResults = mappedOverallCasesResults
     )
-
-    return(res)
-
+    
+    return(results)
+    
   })
   
-
+  incidenceSubset <- shiny::reactive({
+    
+    res <- getIncidence(
+      treat = input$treatment,
+      comp = input$comparator,
+      strat = input$stratOutcome,
+      est = input$estOutcome,
+      anal = input$analysis,
+      db = input$database,
+      incidence = incidence
+    )
+    
+    return(res)
+    
+  })
+  
+  
 
   output$mainTableIncidence <- DT::renderDataTable({
 
@@ -101,9 +113,8 @@ shiny::shinyServer(function(input, output, session) {
               ")"
             )
           )
-
         )
-
+        
       ) %>%
       DT::formatCurrency(
         columns =  "treatmentPersons",
@@ -147,19 +158,19 @@ shiny::shinyServer(function(input, output, session) {
         mark = ",",
         digits = 0
       )
-
+    
     return(table)
-
+    
   })
-
-   output$mainTableRelative <- DT::renderDataTable({
-
+  
+  output$mainTableRelative <- DT::renderDataTable({
+    
     res <- resultSubset()
-
+    
     treatment <- res$relative$treatment[1]
     comparator <- res$relative$comparator[1]
     outcome <- res$relative$stratOutcome[1]
-
+    
     table <- res$relative %>%
       dplyr::mutate(
         combined = paste(
@@ -438,8 +449,12 @@ output$combinedPlot <- plotly::renderPlotly({
         size = 0.4,
         show.legend = TRUE
       ) +
-      ggplot2::scale_x_continuous("Average Predicted Probability") +
-      ggplot2::scale_y_continuous("Observed Fraction With Outcome")
+      ggplot2::scale_x_continuous(
+        name = "Average Predicted Probability"
+      ) +
+      ggplot2::scale_y_continuous(
+        name = "Observed Fraction With Outcome"
+      )
 
   })
 
@@ -473,13 +488,37 @@ output$combinedPlot <- plotly::renderPlotly({
   output$discriminationPlot <- shiny::renderPlot({
     plot <-
       aucSubset() %>%
-      ggplot2::ggplot(ggplot2::aes(x = fpRate, y = sens)) +
-      ggplot2::geom_abline(intercept = 0, slope = 1) +
-      ggplot2::geom_area(color = grDevices::rgb(0, 0, 0.8, alpha = 0.8),
-                         fill = grDevices::rgb(0, 0, 0.8, alpha = 0.4)) +
-      ggplot2::scale_x_continuous("1 - specificity") +
-      ggplot2::scale_y_continuous("Sensitivity")
-
+      ggplot2::ggplot(
+        ggplot2::aes(
+          x = fpRate,
+          y = sens
+        )
+      ) +
+      ggplot2::geom_abline(
+        intercept = 0,
+        slope = 1
+      ) +
+      ggplot2::geom_area(
+        color = grDevices::rgb(
+          red = 0,
+          green = 0,
+          blue = 0.8, 
+          alpha = 0.8
+        ),
+        fill = grDevices::rgb(
+          red = 0,
+          green = 0,
+          blue = 0.8,
+          alpha = 0.4
+          )
+      ) +
+      ggplot2::scale_x_continuous(
+        name = "1 - specificity"
+      ) +
+      ggplot2::scale_y_continuous(
+        name = "Sensitivity"
+      )
+    
     labels <- predictionPerformanceSubset() %>%
       dplyr::select(auc) %>%
       dplyr::mutate(
@@ -496,33 +535,40 @@ output$combinedPlot <- plotly::renderPlotly({
       )
 
     plot <- plot +
-      ggplot2::geom_label(data = labels,
-                          x = .78,
-                          y = .05,
-                          hjust = "left",
-                          vjust = "top",
-                          alpha = 0.8,
-                          ggplot2::aes(
-                            label = auc
-                          ),
-                          size = 5.5
+      ggplot2::geom_label(
+        data = labels,
+        x = .78,
+        y = .05,
+        hjust = "left",
+        vjust = "top",
+        alpha = 0.8,
+        ggplot2::aes(
+          label = auc
+        ),
+        size = 5.5
       )
-
+    
     return(plot)
-
+    
   })
-
+  
   showInfoBox <- function(title, htmlFileName) {
-    showModal(modalDialog(
-      title = title,
-      easyClose = TRUE,
-      footer = NULL,
-      size = "l",
-      HTML(readChar(htmlFileName, file.info(htmlFileName)$size) )
-    ))
+    showModal(
+      modalDialog(
+        title = title,
+        easyClose = TRUE,
+        footer = NULL,
+        size = "l",
+        HTML(
+          readChar(
+            htmlFileName,
+            file.info(htmlFileName)$size) 
+        )
+      )
+    )
   }
-
-observeEvent(input$testInfo, {
+  
+  observeEvent(input$testInfo, {
     showInfoBox(
       "Database information",
       file.path(
@@ -535,5 +581,5 @@ observeEvent(input$testInfo, {
       )
     )
   })
-
+  
 })
