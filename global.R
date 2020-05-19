@@ -40,16 +40,42 @@ incidence <-
       "incidence.rds"
     )
   ) %>%
-  left_join(mapOutcomes, by = c("estOutcome" = "outcome_id")) %>%
+  left_join(
+    mapOutcomes, 
+    by = c(
+      "estOutcome" = "outcome_id"
+    )
+  ) %>%
   select(-estOutcome) %>%
-  rename("estOutcome" = "outcome_name") %>%
-  left_join(mapOutcomes, by = c("stratOutcome" = "outcome_id")) %>%
+  rename(
+    "estOutcome" = "outcome_name"
+  ) %>%
+  left_join(
+    mapOutcomes, 
+    by = c(
+      "stratOutcome" = "outcome_id"
+    )
+  ) %>%
   select(-stratOutcome) %>%
-  rename("stratOutcome" = "outcome_name") %>%
-  left_join(mapExposures, by = c("treatmentId" = "exposure_id")) %>%
+  rename(
+    "stratOutcome" = "outcome_name"
+  ) %>%
+  left_join(
+    mapExposures, 
+    by = c(
+      "treatmentId" = "exposure_id"
+    )
+  ) %>%
   select(-treatmentId) %>%
-  rename("treatment" = "exposure_name") %>%
-  left_join(mapExposures, by = c("comparatorId" = "exposure_id")) %>%
+  rename(
+    "treatment" = "exposure_name"
+  ) %>%
+  left_join(
+    mapExposures, 
+    by = c(
+      "comparatorId" = "exposure_id"
+    )
+  ) %>%
   select(-comparatorId) %>%
   rename("comparator" = "exposure_name")
 
@@ -60,15 +86,36 @@ predictionPerformance <-
       "predictionPerformance.rds"
     )
   ) %>%
-  left_join(mapOutcomes, by = c("stratOutcome" = "outcome_id")) %>%
+  left_join(
+    mapOutcomes,
+    by = c(
+      "stratOutcome" = "outcome_id"
+    )
+  ) %>%
   select(-stratOutcome) %>%
-  rename("stratOutcome" = "outcome_name") %>%
-  left_join(mapExposures, by = c("treatmentId" = "exposure_id")) %>%
+  rename(
+    "stratOutcome" = "outcome_name"
+  ) %>%
+  left_join(
+    mapExposures, 
+    by = c(
+      "treatmentId" = "exposure_id"
+    )
+  ) %>%
   select(-treatmentId) %>%
-  rename("treatment" = "exposure_name") %>%
-  left_join(mapExposures, by = c("comparatorId" = "exposure_id")) %>%
+  rename(
+    "treatment" = "exposure_name"
+  ) %>%
+  left_join(
+    mapExposures, 
+    by = c(
+      "comparatorId" = "exposure_id"
+    )
+  ) %>%
   select(-comparatorId) %>%
-  rename("comparator" = "exposure_name")
+  rename(
+    "comparator" = "exposure_name"
+  )
 
 mappedOverallAbsoluteResults <-
   readRDS(
@@ -77,18 +124,46 @@ mappedOverallAbsoluteResults <-
       "mappedOverallAbsoluteResults.rds"
     )
   ) %>%
-  left_join(mapOutcomes, by = c("estOutcome" = "outcome_id")) %>%
+  left_join(
+    mapOutcomes,
+    by = c(
+      "estOutcome" = "outcome_id"
+    )
+  ) %>%
   select(-estOutcome) %>%
-  rename("estOutcome" = "outcome_name") %>%
-  left_join(mapOutcomes, by = c("stratOutcome" = "outcome_id")) %>%
+  rename(
+    "estOutcome" = "outcome_name"
+  ) %>%
+  left_join(
+    mapOutcomes,
+    by = c(
+      "stratOutcome" = "outcome_id"
+    )
+  ) %>%
   select(-stratOutcome) %>%
-  rename("stratOutcome" = "outcome_name") %>%
-  left_join(mapExposures, by = c("treatment" = "exposure_id")) %>%
+  rename(
+    "stratOutcome" = "outcome_name"
+  ) %>%
+  left_join(
+    mapExposures, 
+    by = c(
+      "treatment" = "exposure_id"
+    )
+  ) %>%
   select(-treatment) %>%
-  rename("treatment" = "exposure_name") %>%
-  left_join(mapExposures, by = c("comparator" = "exposure_id")) %>%
+  rename(
+    "treatment" = "exposure_name"
+  ) %>%
+  left_join(
+    mapExposures,
+    by = c(
+      "comparator" = "exposure_id"
+    )
+  ) %>%
   select(-comparator) %>%
-  rename("comparator" = "exposure_name")
+  rename(
+    "comparator" = "exposure_name"
+  )
 
 mappedOverallRelativeResults <-
   readRDS(
@@ -97,18 +172,46 @@ mappedOverallRelativeResults <-
       "mappedOverallRelativeResults.rds"
     )
   ) %>%
-  left_join(mapOutcomes, by = c("estOutcome" = "outcome_id")) %>%
+  left_join(
+    mapOutcomes, 
+    by = c(
+      "estOutcome" = "outcome_id"
+    )
+  ) %>%
   select(-estOutcome) %>%
-  rename("estOutcome" = "outcome_name") %>%
-  left_join(mapOutcomes, by = c("stratOutcome" = "outcome_id")) %>%
+  rename(
+    "estOutcome" = "outcome_name"
+  ) %>%
+  left_join(
+    mapOutcomes,
+    by = c(
+      "stratOutcome" = "outcome_id"
+    )
+  ) %>%
   select(-stratOutcome) %>%
-  rename("stratOutcome" = "outcome_name") %>%
-  left_join(mapExposures, by = c("treatment" = "exposure_id")) %>%
+  rename(
+    "stratOutcome" = "outcome_name"
+  ) %>%
+  left_join(
+    mapExposures,
+    by = c(
+      "treatment" = "exposure_id"
+    )
+  ) %>%
   select(-treatment) %>%
-  rename("treatment" = "exposure_name") %>%
-  left_join(mapExposures, by = c("comparator" = "exposure_id")) %>%
+  rename(
+    "treatment" = "exposure_name"
+  ) %>%
+  left_join(
+    mapExposures,
+    by = c(
+      "comparator" = "exposure_id"
+    )
+  ) %>%
   select(-comparator) %>%
-  rename("comparator" = "exposure_name")
+  rename(
+    "comparator" = "exposure_name"
+  )
 
 
 mappedOverallCasesResults <-
@@ -118,18 +221,46 @@ mappedOverallCasesResults <-
       "mappedOverallCasesResults.rds"
     )
   ) %>%
-  left_join(mapOutcomes, by = c("estOutcome" = "outcome_id")) %>%
+  left_join(
+    mapOutcomes,
+    by = c(
+      "estOutcome" = "outcome_id"
+    )
+  ) %>%
   select(-estOutcome) %>%
-  rename("estOutcome" = "outcome_name") %>%
-  left_join(mapOutcomes, by = c("stratOutcome" = "outcome_id")) %>%
+  rename(
+    "estOutcome" = "outcome_name"
+  ) %>%
+  left_join(
+    mapOutcomes,
+    by = c(
+      "stratOutcome" = "outcome_id"
+    )
+  ) %>%
   select(-stratOutcome) %>%
-  rename("stratOutcome" = "outcome_name") %>%
-  left_join(mapExposures, by = c("treatment" = "exposure_id")) %>%
+  rename(
+    "stratOutcome" = "outcome_name"
+  ) %>%
+  left_join(
+    mapExposures,
+    by = c(
+      "treatment" = "exposure_id"
+    )
+  ) %>%
   select(-treatment) %>%
-  rename("treatment" = "exposure_name") %>%
-  left_join(mapExposures, by = c("comparator" = "exposure_id")) %>%
+  rename(
+    "treatment" = "exposure_name"
+  ) %>%
+  left_join(
+    mapExposures, 
+    by = c(
+      "comparator" = "exposure_id"
+    )
+  ) %>%
   select(-comparator) %>%
-  rename("comparator" = "exposure_name")
+  rename(
+    "comparator" = "exposure_name"
+  )
 
 databaseOptions <- unique(
   mappedOverallAbsoluteResults$database
