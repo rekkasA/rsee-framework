@@ -8,10 +8,16 @@ shiny::shinyServer(function(input, output, session) {
       dplyr::filter(
         stratOutcome == stratificationOutcome
       ) %>%
-      dplyr::select(estOutcome)
+      dplyr::select(
+        estOutcome
+      )
 
 
-    shiny::updateSelectInput(session = session, inputId = "estOutcome", choices = unique(filteredEstimationOutcomes))
+    shiny::updateSelectInput(
+      session = session,
+      inputId = "estOutcome",
+      choices = unique(filteredEstimationOutcomes)
+    )
   })
   
   resultSubset <- shiny::reactive({
@@ -378,21 +384,47 @@ output$combinedPlot <- plotly::renderPlotly({
       ggplot2::xlab("Preference score") +
       ggplot2::scale_fill_manual(
         values = c(
-          rgb(0.8, 0, 0, alpha = 0.5),
-          rgb(0, 0, 0.8, alpha = 0.5)
+          rgb(
+            red = 0.8,
+            green = 0,
+            blue = 0, 
+            alpha = 0.5
+          ),
+          rgb(
+            red = 0,
+            green = 0, 
+            blue = 0.8, 
+            alpha = 0.5
+          )
         )
       ) +
       ggplot2::scale_color_manual(
         values = c(
-          rgb(0.8, 0, 0, alpha = 0.5),
-          rgb(0, 0, 0.8, alpha = 0.5)
+          rgb(
+            red = 0.8,
+            green = 0,
+            blue = 0, 
+            alpha = 0.5
+          ),
+          rgb(
+            red = 0,
+            green = 0,
+            blue = 0.8,
+            alpha = 0.5
+          )
         )
       ) +
       ggplot2::theme(
         legend.title = ggplot2::element_blank(),
         legend.position = "top",
         legend.text = ggplot2::element_text(
-          margin = ggplot2::margin(0, 0.5, 0, 0.1, "cm")
+          margin = ggplot2::margin(
+            t = 0, 
+            r = 0.5,
+            b = 0,
+            l = 0.1, 
+            unit = "cm"
+          )
         )
       ) 
   })
@@ -581,5 +613,4 @@ output$combinedPlot <- plotly::renderPlotly({
       )
     )
   })
-  
 })
