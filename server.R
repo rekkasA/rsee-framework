@@ -292,7 +292,6 @@ shiny::shinyServer(function(input, output, session) {
               ")"
             )
           )
-
         )
       )
 
@@ -380,8 +379,12 @@ output$combinedPlot <- plotly::renderPlotly({
         )
       ) +
       ggplot2::facet_grid(~riskStratum) +
-      ggplot2::ylab("Density") +
-      ggplot2::xlab("Preference score") +
+      ggplot2::ylab(
+        label = "Density"
+      ) +
+      ggplot2::xlab(
+        label = "Preference score"
+      ) +
       ggplot2::scale_fill_manual(
         values = c(
           rgb(
