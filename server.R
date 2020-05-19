@@ -1,6 +1,7 @@
 library(dplyr)
 shiny::shinyServer(function(input, output, session) {
 
+
   shiny::observe({
     stratificationOutcome <- input$stratOutcome
     filteredEstimationOutcomes <- mappedOverallRelativeResults %>%
@@ -34,8 +35,10 @@ shiny::shinyServer(function(input, output, session) {
     return(res)
 
   })
+  
 
-   output$mainTableIncidence <- DT::renderDataTable({
+
+  output$mainTableIncidence <- DT::renderDataTable({
 
     res <- incidenceSubset()
 
@@ -73,7 +76,7 @@ shiny::shinyServer(function(input, output, session) {
           "Comparator events"
         ),
         caption = htmltools::tags$caption(
-          style = "caption-side: bottom; text-align: center;",
+          style = "caption-side: top; text-align: left;",
           "Table 1: Number of subjects, follow-up time (in years), event rates in the treatment",
           htmltools::em(
             paste0(
@@ -181,7 +184,7 @@ shiny::shinyServer(function(input, output, session) {
       tidyr::spread(riskStratum, combined) %>%
       DT::datatable(
         caption = htmltools::tags$caption(
-          style = "caption-side: bottom; text-align: center;",
+          style = "caption-side: top; text-align: left;",
           "Table 2: Hazard ratios comparing treatment",
           htmltools::em(
             paste0(
@@ -247,7 +250,7 @@ shiny::shinyServer(function(input, output, session) {
       tidyr::spread(riskStratum, combined) %>%
       DT::datatable(
         caption = htmltools::tags$caption(
-          style = "caption-side: bottom; text-align: center;",
+          style = "caption-side: top; text-align: left;",
           "Table 3: Absolute risk reduction (%) when comparing treatment",
           htmltools::em(
             paste0(
@@ -338,70 +341,62 @@ output$combinedPlot <- plotly::renderPlotly({
     return(res)
   })
 
-  output$evaluationPlot <- shiny::renderPlot({
-    stratIdNumber <- mapOutcomes %>%
-      dplyr::filter(
-        outcome_name == input$stratOutcome
+  output$evaluationPlotPs <- shiny::renderPlot({
+
+    psDensitySubset() %>%
+      dplyr::left_join(
+        mapExposures,
+        by = c("treatment" = "exposure_id")
       ) %>%
-      dplyr::select(outcome_id) %>%
-      unlist()
-    estIdNumber <- mapOutcomes %>%
-      dplyr::filter(
-        outcome_name == input$estOutcomeEstimation
-      ) %>%
-      dplyr::select(outcome_id) %>%
-      unlist()
-    if (input$evaluateEstimation == "Propensity scores") {
-      psDensitySubset() %>%
-        dplyr::left_join(
-          mapExposures,
-          by = c("treatment" = "exposure_id")
-        ) %>%
-        ggplot2::ggplot(
-          ggplot2::aes(
-            x = x,
-            y = y
-          )
-        ) +
-        ggplot2::geom_density(
-          stat = "identity",
-          ggplot2::aes(
-            color = exposure_name,
-            group = exposure_name,
-            fill = exposure_name
-          )
-        ) +
-        ggplot2::facet_grid(~riskStratum) +
-        ggplot2::ylab("Density") +
-        ggplot2::xlab("Preference score") +
-        ggplot2::scale_fill_manual(
-          values = c(
-            rgb(0.8, 0, 0, alpha = 0.5),
-            rgb(0, 0, 0.8, alpha = 0.5)
-          )
-        ) +
-        ggplot2::scale_color_manual(
-          values = c(
-            rgb(0.8, 0, 0, alpha = 0.5),
-            rgb(0, 0, 0.8, alpha = 0.5)
-          )
-        ) +
-        ggplot2::theme(
-          legend.title = ggplot2::element_blank(),
-          legend.position = "top",
-          legend.text = ggplot2::element_text(
-            margin = ggplot2::margin(0, 0.5, 0, 0.1, "cm")
-          )
-        ) %>%
-        return()
-    }
-    else {
-      balanceSubset() %>%
-        CohortMethod::plotCovariateBalanceScatterPlot() +
-        ggplot2::facet_grid(~riskStratum) %>%
-        return()
-    }
+      ggplot2::ggplot(
+        ggplot2::aes(
+          x = x,
+          y = y
+        )
+      ) +
+      ggplot2::geom_density(
+        stat = "identity",
+        ggplot2::aes(
+          color = exposure_name,
+          group = exposure_name,
+          fill = exposure_name
+        )
+      ) +
+      ggplot2::facet_grid(~riskStratum) +
+      ggplot2::ylab("Density") +
+      ggplot2::xlab("Preference score") +
+      ggplot2::scale_fill_manual(
+        values = c(
+          rgb(0.8, 0, 0, alpha = 0.5),
+          rgb(0, 0, 0.8, alpha = 0.5)
+        )
+      ) +
+      ggplot2::scale_color_manual(
+        values = c(
+          rgb(0.8, 0, 0, alpha = 0.5),
+          rgb(0, 0, 0.8, alpha = 0.5)
+        )
+      ) +
+      ggplot2::theme(
+        legend.title = ggplot2::element_blank(),
+        legend.position = "top",
+        legend.text = ggplot2::element_text(
+          margin = ggplot2::margin(0, 0.5, 0, 0.1, "cm")
+        )
+      ) 
   })
+  
+  output$evaluationPlotBalance <- shiny::renderPlot({
+    balanceSubset() %>%
+      CohortMethod::plotCovariateBalanceScatterPlot(
+        beforeLabel = "Before stratification",
+        afterLabel = "After stratification"
+      ) +
+      ggplot2::facet_grid(
+        ~riskStratum
+      )
+  })
+
 
   calibrationSubset <- shiny::reactive({
     res <- getCalibration(
