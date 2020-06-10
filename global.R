@@ -532,107 +532,143 @@ getAuc <- function(treat,
     select(exposure_id) %>%
     unlist()
 
-    readRDS(
-    file.path(
-      analysisPath,
-      paste0(
-        paste(
-          "auc",
-          predictionPopulation,
-          res$analysis_id,
-          treatmentId,
-          comparatorId,
-          stratOutcomeId,
-          sep = "_"
-        ),
-        ".rds"
-      )
-    )
-  )
+pathList <- file.path(
+	analysisPath,
+	paste(
+		paste(
+			"auc",
+			predictionPopulation,
+			db,
+			anal,
+			treatmentId,
+			comparatorId,
+			stratOutcomeId,
+			sep = "_"
+		),
+		"rds",
+		sep = "."
+	)
+)
+
+
+aucResultList <- lapply(
+	pathList, 
+	readRDS
+)
+
+names(aucResultList) <- predictionPopulation
+
+aucResultList %>%
+	dplyr::bind_rows(
+		.id = "cohort"
+	) %>%
+	return()
 }
 
 
-getCalibration <- function(treat,
-                           comp,
-                           strat,
-                           db,
-                           anal,
-                           predictionPopulation,
-                           analyses,
-                           mapExposures,
-                           mapOutcomes,
-                           analysisPath) {
-
-  res <- analyses %>%
-    left_join(
-      mapExposures,
-      by = c("treatment_id" = "exposure_id")
-    ) %>%
-    rename(
-      "treatment_name" = "exposure_name"
-    ) %>%
-    left_join(
-      mapExposures,
-      by = c("comparator_id" = "exposure_id")
-    ) %>%
-    rename(
-      "comparator_name" = "exposure_name"
-    ) %>%
-    filter(
-      treatment_name == treat,
-      comparator_name == comp,
-      database == db,
-      analysis_type == anal
-    )
-
-  stratOutcomeId <- mapOutcomes %>%
-    filter(outcome_name == strat) %>%
-    select(outcome_id) %>%
-    unlist()
-
-  treatmentId <- mapExposures %>%
-    filter(exposure_name == treat) %>%
-    select(exposure_id) %>%
-    unlist()
-
-  comparatorId <- mapExposures %>%
-    filter(exposure_name == comp) %>%
-    select(exposure_id) %>%
-    unlist()
-
-    readRDS(
-    file.path(
-      analysisPath,
-      paste0(
-        paste(
-          "calibration",
-          predictionPopulation,
-          res$analysis_id,
-          treatmentId,
-          comparatorId,
-          stratOutcomeId,
-          sep = "_"
-        ),
-        ".rds"
-      )
-    )
-  )
+getCalibration <- function(
+	treat,
+	comp,
+	strat,
+	db,
+	anal,
+	predictionPopulation,
+	analyses,
+	mapExposures,
+	mapOutcomes,
+	analysisPath
+)
+{
+	
+	res <- analyses %>%
+		left_join(
+			mapExposures,
+			by = c("treatment_id" = "exposure_id")
+		) %>%
+		rename(
+			"treatment_name" = "exposure_name"
+		) %>%
+		left_join(
+			mapExposures,
+			by = c("comparator_id" = "exposure_id")
+		) %>%
+		rename(
+			"comparator_name" = "exposure_name"
+		) %>%
+		filter(
+			treatment_name == treat,
+			comparator_name == comp,
+			database == db,
+			analysis_type == anal
+		)
+	
+	stratOutcomeId <- mapOutcomes %>%
+		filter(outcome_name == strat) %>%
+		select(outcome_id) %>%
+		unlist()
+	
+	treatmentId <- mapExposures %>%
+		filter(exposure_name == treat) %>%
+		select(exposure_id) %>%
+		unlist()
+	
+	comparatorId <- mapExposures %>%
+		filter(exposure_name == comp) %>%
+		select(exposure_id) %>%
+		unlist()
+	
+	pathList <- file.path(
+		analysisPath,
+		paste(
+			paste(
+				"calibration",
+				predictionPopulation,
+				db,
+				anal,
+				treatmentId,
+				comparatorId,
+				stratOutcomeId,
+				sep = "_"
+			),
+			"rds",
+			sep = "."
+		)
+	)
+	
+	
+	calibrationResultList <- lapply(
+		pathList, 
+		readRDS
+	)
+	
+	names(calibrationResultList) <- predictionPopulation
+	
+	calibrationResultList %>%
+		dplyr::bind_rows(
+			.id = "cohort"
+		) %>%
+		return()
 }
 
-combinedPlot <- function(cases,
-                         relative,
-                         absolute,
-                         treatment,
-                         comparator) {
 
 
-  customColors <- c(
-    "#0099FF",
-    "#009933",
-    "#CC0000",
-    "#FF9933",
-    "#663399",
-    "#CC9966"
+combinedPlot <- function(
+	cases,
+	relative,
+	absolute,
+	treatment,
+	comparator
+) 
+{
+	
+	
+	customColors <- c(
+		"#0099FF",
+		"#009933",
+		"#CC0000",
+		"#FF9933",
+		"#663399",
+		"#CC9966"
   )
 
   nOutcomes <- length(
@@ -829,7 +865,6 @@ combinedPlot <- function(cases,
 
   p3 <-
     absolute %>%
-    # group_by(estOutcome) %>%
     plot_ly(
       mode = "markers",
       x = ~risk + m,
@@ -898,11 +933,15 @@ hline <- function(y = 0, color = "black") {
 
 
 addInfo <- function(item, infoId) {
-  infoTag <- tags$small(class = "badge pull-right action-button",
-                        style = "padding: 1px 6px 2px 6px; background-color: steelblue;",
-                        type = "button",
-                        id = infoId,
-                        "i")
+  infoTag <- tags$small(
+  	class = "badge pull-right action-button",
+  	style = "padding: 1px 6px 2px 6px; background-color: steelblue;",
+  	type = "button",
+  	id = infoId,
+  	"i"
+  )
+  
   item$children[[1]]$children <- append(item$children[[1]]$children, list(infoTag))
+  
   return(item)
 }
